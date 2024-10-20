@@ -1,0 +1,95 @@
+# Stamatin Teodor 315CA 2022 - 2023 Tema 3
+
+	Pentru acesta problema am ales sa folosesc matrici alocate dinamic in
+	locul structurilor.
+	
+	Am ales sa stochez imaginea initiala intr-o matrice (loaded1), iar in
+	cazul imaginilor color am impartit imaginea in 3 matrici, fiecare
+	stocand valorile pentru o singura culoare (matrixred1, matrixylw1,
+	matrixblue1). In cazul unei selectii, matricea selectata va fi
+	stocata int-un alt rand de matrici (loaded2, respectiv matrixred2, matrixylw2, matrixblue2).
+	
+	Variabila ok o folosesc pentru a iesi din while-ul ce imi citeste
+	comenzile, loaded_image este pentru a verifica daca am poza originala
+	incarcata, selected_image imi arata daca am facut sau nu o selectie pe
+	matricea originala, iar rgb specifica daca matricea este color sau nu
+	(P3, P6). In height1, width1, height1, width2 stochez dimensiunile
+	celor 2 matrici.
+	
+	In text stochez o linie citita de la stdin, in command salvez comanda
+	principala (SAVE, APPLY s.a.m.d), iar type reprezinta magic word-ul.
+	Citesc cate o linie (variabila text) cu fgets, iar apoi verific daca
+	exista o comanda pe randul respectiv.  Apoi prin if else verific :
+	
+	1. LOAD : in primul rand verific daca am o imagine deja incarcata in
+	memorie ca sa o eliberez. Cu sscnaf iau din linia citita (text) numele
+	fisierului. Daca nu exista, se afiseaza mesajul corespunzator si se
+	face continue. Daca exista, cu variabila line citesc magic word-ul iar
+	apoi elimin comentariile pana cand gasesc o linie care sa nu inceapa cu
+	#. extrag din ea dimensiunile pozei iar apoi iau cu fscanf valoarea
+	maxima. Pentru fiecare magic word, citesc corespunzator(fscanf sau
+	fread). La sfarsit, inchid fisierul iar loaded_image devine 1.
+	
+	2. SELECT ALL : daca am deja o imagine selecata, o elimin din memorie
+	si mut imaginea principala de pe a doua pozitie pe prima.
+	
+	3. SELECT x1, y1, x2, y2 :  iau din linia citita coordonatele pe care
+	initial le salvez in variabile auxiliare pentru a verifica daca sunt
+	valide. Apoi daca am deja o imagine selecata, o elimin din memorie
+	pentru a o salva pe cea delimitata de noile dimensiuni. actualizez
+	hight1 si width1.
+	
+	4. HISTOGRAM : iau de pe linie numarul maxim de stelute si numarul de
+	bin uri. verific daca am doar 2 numere valide dupa comanda HISTOGRAM
+	si daca imaginea este grayscale. aloc dinamic vectorul bin unde la
+	sfarsit va fi numarul de stelute pe care le voi avea pe fiecare bin.
+	citesc matricea, iar la fiecare element maresc frecventa pe binul
+	corespunzator. simultan caut si bin-ul cu frecventa maxima. apoi
+	parcurg vectorul bin si calculez nr de stelute cu formula data si le
+	afisez.
+	
+	5. EQUALIZE : verific daca am imagine grayscale. daca nu am imagine
+	selectata (imaginea principala se afla pe prima pozitie) parcurg
+	matricea si folosesc un vector de frecvente pentru a stoca valorile.
+	apoi cu formula data calculez noua valoare a pixelului si ii aplic
+	limitarea(clamp) si round. asemanator se face si daca am imagine
+	selectata(imaginea principala se afla pe a 2a pozitie), doar ca la
+	sfarsit copiez imaginea selectata la locul ei din imaginea originala.
+	
+	6. CROP : verific daca am imagine selectata, iar daca da, eliberez
+	matricea de pe a doua pozitie.
+	
+	7. APPLY la fiecare operatie, am o matrice de 3x3 care este kernel-ul
+	parametrului corespunzator. aloc memorie pentru 3 imagini, si parcurg
+	matricea de pe prima pozitie. la fiecare pas verific daca elementul se
+	afla pe marginea imaginii originale, iar daca nu, imi calculez pixelul
+	cu ajutorul kernel-ului. apoi ii aplic clamp si round. la final,
+	eliberez matricile pe care le aveam si le inlocuiesc adresele cu cele
+	ale matricelor auxiliare create cu pixelii noi. daca pe prima pozitie
+	se afla o imagine selectata, se copiaza valorile din imaginea selectata
+	pe pozitiile corespunzatoare in imaginea originala.
+	
+	8. SAVE : iau cu sscanf numele fisierului unde voi salva si tipul
+	salvarii(adica ascii, daca exista). daca nr este 2, adica am 2 cuvinte
+	dupa SAVE, verific daca save_type este ascii. schimb valoarea magic
+	word-ului, si salvez folosind fprintf. daca nr este 1 inseamna ca am
+	doar 1 cuvant dupa SAVE, adica numele fisierului. schimb iar magic
+	word-ul si salvez binar folosind fwrite.
+	
+	9. EXIT : verific daca am 2 imagini (cea originala si cea selectata)
+	si eliberez toate matricile folosite.
+	
+	10. ROTATE : verific daca am doar o imagine salvata sau, daca am doua,
+	selectia este egala cu imaginea originala. verific daca unghiul dat
+	are valoarea corecta si daca este pozitiv sau negativ ca sa stiu daca
+	sa o rotesc la dreapta sau la stanga aloc dinamic spatiu pentru cate
+	matrici este nevoie(1 pentru grayscale, 3 pentru color). parcurg
+	matricea si imi construiesc matricea( sau matricile ) pe principiul
+	transpusei, dau free la imaginea veche si salvez in adresa ei adresa
+	matricii (sau matricelor) auxliare,  si fac swap la dimensiuni. fac
+	acest lucru de (unghi / 90) ori, printr-un for. daca am 2 imagini
+	salvate de dimeniuni diferite, la sfarsit voi copia matricea selectata
+	pe pozitia ei din matricea originala.
+	
+	11. comanda nu este valida.
+	
